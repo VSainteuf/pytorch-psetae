@@ -81,9 +81,10 @@ class TemporalAttentionEncoder(nn.Module):
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, x):
-        x = self.inlayernorm(x)
 
         sz_b, seq_len, d = x.shape
+
+        x = self.inlayernorm(x)
 
         if self.positions is None:
             src_pos = torch.arange(1, seq_len + 1, dtype=torch.long).expand(sz_b, seq_len).to(x.device)

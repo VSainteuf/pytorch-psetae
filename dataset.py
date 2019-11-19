@@ -11,21 +11,31 @@ import json
 
 
 class PixelSetData(data.Dataset):
-    def __init__(self, folder, labels, vector_length, sub_classes=None, norm=None,
-                 extra_feature=None, jitter=None):
+    def __init__(self, folder, labels, npixel, sub_classes=None, norm=None,
+                 extra_feature=None, jitter=(0.01, 0.05)):
+        """
+        
+        Args:
+            folder (str): path to the main folder of the dataset, formatted as indicated in the readme
+            labels (str): name of the nomenclature to use in the labels.json file
+            npixel (int): Number of sampled pixels in each parcel
+            sub_classes (list): If provided, only the samples from the given list of classes are considered. 
+            (Can be used to remove classes with too few samples)
+            norm (tuple): (mean,std) tuple to use for normalization
+            extra_feature (str): name of the additional static feature file to use
+            jitter (tuple): if provided (sigma, clip) values for the addition random gaussian noise 
+        """
         super(PixelSetData, self).__init__()
 
         self.folder = folder
         self.data_folder = os.path.join(folder, 'DATA')
         self.meta_folder = os.path.join(folder, 'META')
         self.labels = labels
-        self.vector_length = vector_length
+        self.npixel = npixel
         self.norm = norm
 
         self.extra_feature = extra_feature
         self.jitter = jitter  # (sigma , clip )
-
-
 
         l = [f for f in os.listdir(self.data_folder) if f.endswith('.npy')]
         self.pid = [int(f.split('.')[0]) for f in l]
@@ -77,32 +87,44 @@ class PixelSetData(data.Dataset):
         return self.len
 
     def __getitem__(self, item):
+        """
+        Returns a Pixel-Set sequence tensor with its pixel mask and optional additional features.
+        For each item npixel pixels are randomly dranw from the available pixels.
+        If the total number of pixel is too small one arbitrary pixel is repeated. The pixel mask keeps track of true
+        and repeated pixels.
+        Returns:
+              (Pixel-Set, Pixel-Mask) or ((Pixel-Set, Pixel-Mask), Extra-features) with:
+                Pixel-Set: Sequence_length x Channels x npixel
+                Pixel-Mask : Sequence_length x npixel
+                Extra-features : Sequence_length x Number of additional features
+
+        """
 
         item = self.indices[item]
 
         x0 = np.load(os.path.join(self.folder, 'DATA', '{}.npy'.format(self.pid[item])))
         y = self.target[item]
 
-        if x0.shape[-1] > self.vector_length:
-            idx = np.random.choice(list(range(x0.shape[-1])), size=self.vector_length, replace=False)
+        if x0.shape[-1] > self.npixel:
+            idx = np.random.choice(list(range(x0.shape[-1])), size=self.npixel, replace=False)
             x = x0[:, :, idx]
-            mask = np.ones(self.vector_length)
+            mask = np.ones(self.npixel)
 
-        elif x0.shape[-1] < self.vector_length:
+        elif x0.shape[-1] < self.npixel:
 
             if x0.shape[-1] == 0:
-                x = np.zeros((*x0.shape[:2], self.vector_length))
-                mask = np.zeros(self.vector_length)
+                x = np.zeros((*x0.shape[:2], self.npixel))
+                mask = np.zeros(self.npixel)
                 mask[0] = 1
             else:
-                x = np.zeros((*x0.shape[:2], self.vector_length))
+                x = np.zeros((*x0.shape[:2], self.npixel))
                 x[:, :, :x0.shape[-1]] = x0
                 x[:, :, x0.shape[-1]:] = np.stack([x[:, :, 0] for _ in range(x0.shape[-1], x.shape[-1])], axis=-1)
                 mask = np.array(
-                    [1 for _ in range(x0.shape[-1])] + [0 for _ in range(x0.shape[-1], self.vector_length)])
+                    [1 for _ in range(x0.shape[-1])] + [0 for _ in range(x0.shape[-1], self.npixel)])
         else:
             x = x0
-            mask = np.ones(self.vector_length)
+            mask = np.ones(self.npixel)
 
         if self.norm is not None:
             m, s = self.norm
@@ -130,8 +152,8 @@ class PixelSetData(data.Dataset):
         if self.extra_feature is not None:
             ef = (self.extra[str(self.pid[item])] - self.extra_m) / self.extra_s
             ef = torch.from_numpy(ef).float()
-            if self.unitemp is None:
-                ef = torch.stack([ef for _ in range(data[0].shape[0])], dim=0)
+
+            ef = torch.stack([ef for _ in range(data[0].shape[0])], dim=0)
             data = (data, ef)
 
 

@@ -65,6 +65,17 @@ class PixelSetEncoder(nn.Module):
         self.mlp2 = nn.Sequential(*layers)
 
     def forward(self, input):
+        """
+        The input of the PSE is a tuple of tensors as yielded by the PixelSetData class:
+          (Pixel-Set, Pixel-Mask) or ((Pixel-Set, Pixel-Mask), Extra-features)
+        Pixel-Set : Batch_size x (Sequence length) x Channel x Number of pixels
+        Pixel-Mask : Batch_size x (Sequence length) x Number of pixels
+        Extra-features : Batch_size x (Sequence length) x Number of features
+
+        If the input tensors have a temporal dimension, it will be combined with the batch dimension so that the
+        complete sequences are processed at once. Then the temporal dimension is separated back to produce a tensor of
+        shape Batch_size x Sequence length x Embedding dimension
+        """
         a, b = input
         if len(a) == 2:
             out, mask = a
@@ -83,8 +94,6 @@ class PixelSetEncoder(nn.Module):
             mask = mask.view(batch * temp, -1)
             if self.with_extra:
                 extra = extra.view(batch * temp, -1)
-
-
         else:
             reshape_needed = False
 
@@ -93,14 +102,11 @@ class PixelSetEncoder(nn.Module):
 
         if self.with_extra:
             out = torch.cat([out, extra], dim=1)
-
         out = self.mlp2(out)
 
         if reshape_needed:
             out = out.view(batch, temp, -1)
-
         return out
-
 
 class linlayer(nn.Module):
     def __init__(self, in_dim, out_dim):
@@ -121,7 +127,6 @@ class linlayer(nn.Module):
 
         return out
 
-
 def masked_mean(x, mask):
     out = x.permute((1, 0, 2))
     out = out * mask
@@ -129,36 +134,27 @@ def masked_mean(x, mask):
     out = out.permute((1, 0))
     return out
 
-
 def masked_std(x, mask):
     m = masked_mean(x, mask)
 
     out = x.permute((2, 0, 1))
     out = out - m
-
     out = out.permute((2, 1, 0))
 
     out = out * mask
-
     d = mask.sum(dim=-1)
     d[d == 1] = 2
 
     out = (out ** 2).sum(dim=-1) / (d - 1)
-
-    out = torch.sqrt(out + 10e-32)
-
+    out = torch.sqrt(out + 10e-32) # To ensure differentiability
     out = out.permute(1, 0)
-
     return out
-
 
 def maximum(x, mask):
     return x.max(dim=-1)[0].squeeze()
 
-
 def minimum(x, mask):
     return x.min(dim=-1)[0].squeeze()
-
 
 pooling_methods = {
     'mean': masked_mean,
