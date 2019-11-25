@@ -35,8 +35,8 @@ class PseTae(nn.Module):
         t = get_ntrainparams(self.temporal_encoder)
         c = get_ntrainparams(self.decoder)
 
-        print('TOTAL PARAMS : {}'.format(total))
-        print('RATIOS: Spatial {:5.1f} , Temporal {:5.1f}, Classifier {:5.1f}'.format(s / total * 100,
+        print('TOTAL TRAINABLE PARAMETERS : {}'.format(total))
+        print('RATIOS: Spatial {:5.1f}% , Temporal {:5.1f}% , Classifier {:5.1f}%'.format(s / total * 100,
                                                                                       t / total * 100,
                                                                                       c / total * 100))
 
