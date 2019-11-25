@@ -45,7 +45,10 @@ def weight_init(m):
         init.constant_(m.bias.data, 0)
     elif isinstance(m, nn.Linear):
         init.xavier_normal_(m.weight.data)
-        init.normal_(m.bias.data)
+        try:
+            init.normal_(m.bias.data)
+        except AttributeError:
+            pass
     elif isinstance(m, nn.LSTM):
         for param in m.parameters():
             if len(param.shape) >= 2:

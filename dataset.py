@@ -12,7 +12,7 @@ import json
 
 class PixelSetData(data.Dataset):
     def __init__(self, folder, labels, npixel, sub_classes=None, norm=None,
-                 extra_feature=None, jitter=(0.01, 0.05)):
+                 extra_feature=None, jitter=(0.01, 0.05), return_id = False):
         """
         
         Args:
@@ -23,7 +23,8 @@ class PixelSetData(data.Dataset):
             (Can be used to remove classes with too few samples)
             norm (tuple): (mean,std) tuple to use for normalization
             extra_feature (str): name of the additional static feature file to use
-            jitter (tuple): if provided (sigma, clip) values for the addition random gaussian noise 
+            jitter (tuple): if provided (sigma, clip) values for the addition random gaussian noise
+            return_id (bool): if True, the id of the yielded item is also returned (useful for inference)
         """
         super(PixelSetData, self).__init__()
 
@@ -36,6 +37,7 @@ class PixelSetData(data.Dataset):
 
         self.extra_feature = extra_feature
         self.jitter = jitter  # (sigma , clip )
+        self.return_id = return_id
 
         l = [f for f in os.listdir(self.data_folder) if f.endswith('.npy')]
         self.pid = [int(f.split('.')[0]) for f in l]
@@ -81,8 +83,6 @@ class PixelSetData(data.Dataset):
             df = pd.DataFrame(self.extra).transpose()
             self.extra_m, self.extra_s = np.array(df.mean(axis=0)), np.array(df.std(axis=0))
 
-        self.indices = list(range(self.len))
-
     def __len__(self):
         return self.len
 
@@ -99,9 +99,6 @@ class PixelSetData(data.Dataset):
                 Extra-features : Sequence_length x Number of additional features
 
         """
-
-        item = self.indices[item]
-
         x0 = np.load(os.path.join(self.folder, 'DATA', '{}.npy'.format(self.pid[item])))
         y = self.target[item]
 
@@ -156,10 +153,10 @@ class PixelSetData(data.Dataset):
             ef = torch.stack([ef for _ in range(data[0].shape[0])], dim=0)
             data = (data, ef)
 
-
-        return data, torch.from_numpy(np.array(y, dtype=int))
-
-
+        if self.return_id:
+            return data, torch.from_numpy(np.array(y, dtype=int)), self.pid[item]
+        else:
+            return data, torch.from_numpy(np.array(y, dtype=int))
 
 
 def parse(date):

@@ -86,12 +86,18 @@ def evaluation(model, criterion, loader, device, config, mode='val'):
 
 
 def get_loaders(dt, kfold, config):
-    kf = KFold(n_splits=kfold, random_state=1, shuffle=False)
+    indices = list(range(len(dt)))
+    np.random.shuffle(indices)
+
+    kf = KFold(n_splits=kfold, shuffle=False)
     indices_seq = list(kf.split(list(range(len(dt)))))
     ntest = len(indices_seq[0][1])
 
     loader_seq = []
     for trainval, test_indices in indices_seq:
+        trainval = [indices[i] for i in trainval]
+        test_indices = [indices[i] for i in test_indices]
+
         validation_indices = trainval[-ntest:]
         train_indices = trainval[:-ntest]
 
@@ -184,13 +190,14 @@ def main(config):
 
         print(model.param_ratio())
 
+        model = model.to(device)
+        model.apply(weight_init)
         optimizer = torch.optim.Adam(model.parameters())
         criterion = FocalLoss(config['gamma'])
 
         trainlog = {}
 
-        model = model.to(device)
-        model.apply(weight_init)
+
 
         best_mIoU = 0
         for epoch in range(1, config['epochs'] + 1):

@@ -31,32 +31,47 @@ The code has been tested in the following environment:
 Ubuntu 18.04.1 LTS, python 3.6.6, pytorch 1.1.0, CUDA 10.0
 
 
-## Dataset downloads
+## Downloads
 
-
+### Datasets
 <span style="color:red"> Links to be activated soon </span>
 
 The *Pixel-Set* dataset can be downloaded [here](soon).
 
 The *Patch* dataset can be downloaded [here](soon)
 
+### Pre-trained weights
+
+[Pre-trained weights](soon)
+
 ## Code 
+
+### Code structure
+- The PyTorch implementations od the PSE, TAE and PSE+TAE architectures are located in the `models` folder. 
+- The folder `learning` contains some additional utilities that are used for training. 
+- The repository also contains two 
+high-level scripts `train.py` and `inference.py` that should make it easier to get started. 
+
+### Code Usage 
 
 #### Reproduce
 
 Run the `train.py` script to reproduce the results of the PSE+TAE architecture presented in the paper. 
-You will just need to specify the path to the *Pixel-Set* dataset with the `--dataset_folder` agrument. 
+You will just need to specify the path to the *Pixel-Set* dataset (link above) with the `--dataset_folder` agrument. 
 
 #### Experiment
 
 The default settings of the `train.py` script are those used to produce the results in the paper. 
-Yet, some options are already implemented to play around with different parameters. 
+Yet, some options are already implemented to play around with the model's hyperparameters and other training settings. 
 These options are accessible through an argparse menu (see directly inside the script). 
 
 
 #### Re-use
 
-The two components of our model (the PSE and the TAE) are implemented as stand-alone 
+- You can use the [pre-trained weights]() in the `inference.py` script to produce predictions on our dataset
+or your own, provided that it is formatted as per the indications below. 
+
+- The two components of our model (the PSE and the TAE) are implemented as stand-alone 
 pytorch nn.Modules (in `pse.py` and `tae.py`) and can be used for other applications.
 While the PSE needs to be used in combination with the PixelSetData class, 
 the TAE can be applied to any sequential data (with input tensors of shape batch_size x sequence_length x embedding_size). 
@@ -164,5 +179,10 @@ of the focal loss
 
 In case you use part of the present code, please include a citation to the following paper:
 
-[https://arxiv.org/abs/1911.07757](https://arxiv.org/abs/1911.07757)  (*The link will be updated upon publication*)
+Sainte Fare Garnot, Vivien , Loic Landrieu, Sebastien Giordano, and Nesrine Chehata. 
+"Satellite Image Time Series Classification with Pixel-Set Encoders and Temporal Self-Attention." 
+arXiv preprint arXiv:1911.07757 (2019).
+
+[https://arxiv.org/abs/1911.07757](https://arxiv.org/abs/1911.07757)  
+(*The link and reference will be updated upon publication*)
 
