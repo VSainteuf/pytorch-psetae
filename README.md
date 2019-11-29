@@ -34,20 +34,19 @@ Ubuntu 18.04.1 LTS, python 3.6.6, pytorch 1.1.0, CUDA 10.0
 ## Downloads
 
 ### Datasets
-<span style="color:red"> Links to be activated soon </span>
 
-The *Pixel-Set* dataset can be downloaded [here](soon).
+The *Pixel-Set* dataset can be downloaded [here](http://recherche.ign.fr/llandrieu/TAE/S2-2017-T31TFM-PixelSet-TOY.zip). (**TOY VERSION** with only a few parcels, the full dataset will be uploaded soon)
 
-The *Patch* dataset can be downloaded [here](soon)
+The *Patch* dataset can be downloaded [here](soon) **Link to be activated soon**
 
 ### Pre-trained weights
 
-[Pre-trained weights](soon)
+We also provide the [pre-trained weights](http://recherche.ign.fr/llandrieu/TAE/PSETAE-PreTrainedWeights.zip) for inference. 
 
 ## Code 
 
 ### Code structure
-- The PyTorch implementations od the PSE, TAE and PSE+TAE architectures are located in the `models` folder. 
+- The PyTorch implementations of the PSE, TAE and PSE+TAE architectures are located in the `models` folder. 
 - The folder `learning` contains some additional utilities that are used for training. 
 - The repository also contains two 
 high-level scripts `train.py` and `inference.py` that should make it easier to get started. 
@@ -68,8 +67,7 @@ These options are accessible through an argparse menu (see directly inside the s
 
 #### Re-use
 
-- You can use the [pre-trained weights]() in the `inference.py` script to produce predictions on our dataset
-or your own, provided that it is formatted as per the indications below. 
+- You can use the [pre-trained weights](http://recherche.ign.fr/llandrieu/TAE/PSETAE-PreTrainedWeights.zip) in the `inference.py` script to produce predictions on our dataset or your own, provided that it is formatted as per the indications below. You will need to pass the path to the unzipped folder containing the weights with the `--weight_dir` argument. (*do not* uncompress the `model.pth.tar` files as the script takes care of this.) 
 
 - The two components of our model (the PSE and the TAE) are implemented as stand-alone 
 pytorch nn.Modules (in `pse.py` and `tae.py`) and can be used for other applications.
