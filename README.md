@@ -1,9 +1,9 @@
-# Satellite Image Time Series Classification with Pixel-Set Encoders and Temporal Self-Attention
+# Satellite Image Time Series Classification with Pixel-Set Encoders and Temporal Self-Attention (CVPR 2020)
 
 
 PyTorch implementation of the model presented in 
 ["Satellite Image Time Series Classification with Pixel-Set Encoders 
-and Temporal Self-Attention"](https://arxiv.org/abs/1911.07757)
+and Temporal Self-Attention"](https://arxiv.org/abs/1911.07757) published ar CVPR 2020.
 
 ![](./graphics/PSETAE.png)
 
@@ -180,10 +180,12 @@ of the focal loss
 
 In case you use part of the present code, please include a citation to the following paper:
 
-Sainte Fare Garnot, Vivien , Loic Landrieu, Sebastien Giordano, and Nesrine Chehata. 
-"Satellite Image Time Series Classification with Pixel-Set Encoders and Temporal Self-Attention." 
-arXiv preprint arXiv:1911.07757 (2019).
+```
+@article{garnot2019psetae,
+  title={Satellite Image Time Series Classification with Pixel-Set Encoders and Temporal Self-Attention},
+  author={Sainte Fare Garnot, Vivien  and Landrieu, Loic and Giordano, Sebastien and Chehata, Nesrine},
+  journal={CVPR},
+  year={2020}
+}
 
-[https://arxiv.org/abs/1911.07757](https://arxiv.org/abs/1911.07757)  
-(*The link and reference will be updated upon publication*)
-
+```
