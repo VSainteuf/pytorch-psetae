@@ -22,6 +22,11 @@ state-of-the-art approaches in terms of precision, but also significantly decrea
 requirements. Lastly, we release a large open-access annotated dataset as a benchmark 
 for future work on satellite image time series.*
 
+
+## [UPDATES]
+
+- **12.03.2020** Bug fix in the TAE script (*see pull request comments*): if you were using a previous version, re-download the pre-trained weights. 
+
 ## Requirements
 - Pytorch + torchnet
 - numpy + pandas + sklearn
@@ -38,13 +43,13 @@ Ubuntu 18.04.1 LTS, python 3.6.6, pytorch 1.1.0, CUDA 10.0
 * A *toy version* of the Pixel-set dataset can be directly downloaded [here](http://recherche.ign.fr/llandrieu/TAE/S2-2017-T31TFM-PixelSet-TOY.zip), 
 to get an idea of the dataset structure.
 
-* The complete Pixel-set and Pixel-patch datasets are accessible on this ftp server: ftp://ftp3.ign.fr/.
+* The complete Pixel-set and Pixel-patch datasets are accessible upon request.
 
-**Please send an e-mail to lastig (dot) data (at) gmail (dot) com to request credentials for the ftp.**
+**Please send an e-mail to lastig (dot) data (at) gmail (dot) com to request access.**
 
 ### Pre-trained weights
 
-We also provide the [pre-trained weights](http://recherche.ign.fr/llandrieu/TAE/PSETAE-PreTrainedWeights.zip) for inference. 
+We also provide the [pre-trained weights](http://recherche.ign.fr/llandrieu/TAE/PSETAE-PreTrainedWeights-v2.zip) for inference. 
 
 ## Code 
 
@@ -70,7 +75,7 @@ These options are accessible through an argparse menu (see directly inside the s
 
 #### Re-use
 
-- You can use the [pre-trained weights](http://recherche.ign.fr/llandrieu/TAE/PSETAE-PreTrainedWeights.zip) in the `inference.py` script to produce predictions on our dataset or your own, provided that it is formatted as per the indications below. You will need to pass the path to the unzipped folder containing the weights with the `--weight_dir` argument. (*do not* uncompress the `model.pth.tar` files as the script takes care of this.) 
+- You can use the [pre-trained weights](http://recherche.ign.fr/llandrieu/TAE/PSETAE-PreTrainedWeights-v2.zip) in the `inference.py` script to produce predictions on our dataset or your own, provided that it is formatted as per the indications below. You will need to pass the path to the unzipped folder containing the weights with the `--weight_dir` argument. (*do not* uncompress the `model.pth.tar` files as the script takes care of this.) 
 
 - The two components of our model (the PSE and the TAE) are implemented as stand-alone 
 pytorch nn.Modules (in `pse.py` and `tae.py`) and can be used for other applications.
