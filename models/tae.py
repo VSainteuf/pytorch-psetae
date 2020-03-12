@@ -57,7 +57,7 @@ class TemporalAttentionEncoder(nn.Module):
         if d_model is not None:
             self.d_model = d_model
             self.inconv = nn.Sequential(nn.Conv1d(in_channels, d_model, 1),
-                                        nn.LayerNorm(d_model))
+                                        nn.LayerNorm(d_model, len_max_seq))
             self.name += '_dmodel{}'.format(d_model)
         else:
             self.d_model = in_channels
@@ -90,11 +90,10 @@ class TemporalAttentionEncoder(nn.Module):
             src_pos = torch.arange(1, seq_len + 1, dtype=torch.long).expand(sz_b, seq_len).to(x.device)
         else:
             src_pos = torch.arange(0, seq_len, dtype=torch.long).expand(sz_b, seq_len).to(x.device)
+        enc_output = x + self.position_enc(src_pos)
 
         if self.inconv is not None:
-            x = self.inconv(x)
-
-        enc_output = x + self.position_enc(src_pos)
+            enc_output = self.inconv(enc_output.permute(0, 2, 1)).permute(0, 2, 1)
 
         enc_output, attn = self.attention_heads(enc_output, enc_output, enc_output)
 
@@ -121,8 +120,8 @@ class MultiHeadAttention(nn.Module):
         nn.init.normal_(self.fc1_k.weight, mean=0, std=np.sqrt(2.0 / (d_k)))
 
         self.fc2 = nn.Sequential(
-            nn.BatchNorm1d(d_k),
-            nn.Linear(d_k, d_k)
+            nn.BatchNorm1d(n_head * d_k),
+            nn.Linear(n_head * d_k, n_head * d_k)
         )
 
         self.attention = ScaledDotProductAttention(temperature=np.power(d_k, 0.5))
@@ -132,10 +131,11 @@ class MultiHeadAttention(nn.Module):
         sz_b, seq_len, _ = q.size()
 
         q = self.fc1_q(q).view(sz_b, seq_len, n_head, d_k)
-        q = q.permute(2, 0, 1, 3).contiguous().view(-1, seq_len, d_k)  # (n*b) x lq x dk
-        q = q.mean(dim=1)  # MEAN query
+        q = q.mean(dim=1).squeeze()  # MEAN query
+        q = self.fc2(q.view(sz_b, n_head * d_k)).view(sz_b, n_head, d_k)
+        q = q.permute(1, 0, 2).contiguous().view(n_head * sz_b, d_k)
 
-        k = self.fc1_q(k).view(sz_b, seq_len, n_head, d_k)
+        k = self.fc1_k(k).view(sz_b, seq_len, n_head, d_k)
         k = k.permute(2, 0, 1, 3).contiguous().view(-1, seq_len, d_k)  # (n*b) x lk x dk
 
         v = v.repeat(n_head, 1, 1)  # (n*b) x lv x d_in
