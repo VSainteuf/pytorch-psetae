@@ -11,7 +11,7 @@ import argparse
 import pprint
 
 from models.stclassifier import PseTae
-from dataset import PixelSetData
+from dataset import PixelSetData, PixelSetData_preloaded
 from learning.focal_loss import FocalLoss
 from learning.weight_init import weight_init
 from learning.metrics import mIou, confusion_matrix_analysis
@@ -164,10 +164,17 @@ def main(config):
 
     mean_std = pkl.load(open(config['dataset_folder'] + '/S2-2017-T31TFM-meanstd.pkl', 'rb'))
     extra = 'geomfeat' if config['geomfeat'] else None
-    dt = PixelSetData(config['dataset_folder'], labels='label_44class', npixel=config['npixel'],
-                      sub_classes=[1, 3, 4, 5, 6, 8, 9, 12, 13, 14, 16, 18, 19, 23, 28, 31, 33, 34, 36, 39],
-                      norm=mean_std,
-                      extra_feature=extra)
+
+    if config['preload']:
+        dt = PixelSetData_preloaded(config['dataset_folder'], labels='label_44class', npixel=config['npixel'],
+                          sub_classes=[1, 3, 4, 5, 6, 8, 9, 12, 13, 14, 16, 18, 19, 23, 28, 31, 33, 34, 36, 39],
+                          norm=mean_std,
+                          extra_feature=extra)
+    else:
+        dt = PixelSetData(config['dataset_folder'], labels='label_44class', npixel=config['npixel'],
+                          sub_classes=[1, 3, 4, 5, 6, 8, 9, 12, 13, 14, 16, 18, 19, 23, 28, 31, 33, 34, 36, 39],
+                          norm=mean_std,
+                          extra_feature=extra)
     device = torch.device(config['device'])
 
     loaders = get_loaders(dt, config['kfold'], config)
@@ -250,6 +257,9 @@ if __name__ == '__main__':
                         help='Name of device to use for tensor computations (cuda/cpu)')
     parser.add_argument('--display_step', default=50, type=int,
                         help='Interval in batches between display of training metrics')
+    parser.add_argument('--preload', dest='preload', action='store_true',
+                        help='If specified, the whole dataset is loaded to RAM at initialization')
+    parser.set_defaults(preload=False)
 
     # Training parameters
     parser.add_argument('--kfold', default=5, type=int, help='Number of folds for cross validation')
