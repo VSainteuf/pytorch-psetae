@@ -8,7 +8,6 @@ import datetime as dt
 
 import os
 import json
-from tqdm import tqdm
 
 
 class PixelSetData(data.Dataset):
@@ -168,7 +167,7 @@ class PixelSetData_preloaded(PixelSetData):
                                                      return_id)
         self.samples = []
         print('Loading samples to memory . . .')
-        for item in tqdm(range(len(self))):
+        for item in range(len(self)):
             self.samples.append(super(PixelSetData_preloaded, self).__getitem__(item))
         print('Done !')
 
