@@ -12,7 +12,7 @@ import json
 
 class PixelSetData(data.Dataset):
     def __init__(self, folder, labels, npixel, sub_classes=None, norm=None,
-                 extra_feature=None, jitter=(0.01, 0.05), return_id = False):
+                 extra_feature=None, jitter=(0.01, 0.05), return_id=False):
         """
         
         Args:
@@ -71,7 +71,6 @@ class PixelSetData(data.Dataset):
             d = json.loads(file.read())
         self.dates = [d[str(i)] for i in range(len(d))]
         self.date_positions = date_positions(self.dates)
-
 
         if self.extra_feature is not None:
             with open(os.path.join(self.meta_folder, '{}.json'.format(extra_feature)), 'r') as file:
@@ -143,7 +142,7 @@ class PixelSetData(data.Dataset):
             sigma, clip = self.jitter
             x = x + np.clip(sigma * np.random.randn(*x.shape), -1 * clip, clip)
 
-        mask = np.stack([mask for _ in range(x.shape[0])], axis = 0) #Add temporal dimension to mask
+        mask = np.stack([mask for _ in range(x.shape[0])], axis=0)  # Add temporal dimension to mask
         data = (Tensor(x), Tensor(mask))
 
         if self.extra_feature is not None:
@@ -159,6 +158,23 @@ class PixelSetData(data.Dataset):
             return data, torch.from_numpy(np.array(y, dtype=int))
 
 
+class PixelSetData_preloaded(PixelSetData):
+    """ Wrapper class to load all the dataset to RAM at initialization (when the hardware permits it).
+    """
+    def __init__(self, folder, labels, npixel, sub_classes=None, norm=None,
+                 extra_feature=None, jitter=(0.01, 0.05), return_id=False):
+        super(PixelSetData_preloaded, self).__init__(folder, labels, npixel, sub_classes, norm, extra_feature, jitter,
+                                                     return_id)
+        self.samples = []
+        print('Loading samples to memory . . .')
+        for item in range(len(self)):
+            self.samples.append(super(PixelSetData_preloaded, self).__getitem__(item))
+        print('Done !')
+
+    def __getitem__(self, item):
+        return self.samples[item]
+
+
 def parse(date):
     d = str(date)
     return int(d[:4]), int(d[4:6]), int(d[6:])
@@ -166,6 +182,7 @@ def parse(date):
 
 def interval_days(date1, date2):
     return abs((dt.datetime(*parse(date1)) - dt.datetime(*parse(date2))).days)
+
 
 def date_positions(dates):
     pos = []

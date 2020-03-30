@@ -25,6 +25,7 @@ for future work on satellite image time series.*
 
 ## [UPDATES]
 
+- **30.03.2020** Dataset preparation script available in 'preprocessing' folder + Variation of the PixeSetData class that loads all samples to RAM at init.  
 - **12.03.2020** Bug fix in the TAE script (*see pull request comments*): if you were using a previous version, re-download the pre-trained weights. 
 
 ## Requirements
