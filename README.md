@@ -3,12 +3,12 @@
 
 PyTorch implementation of the model presented in 
 ["Satellite Image Time Series Classification with Pixel-Set Encoders 
-and Temporal Self-Attention"](https://arxiv.org/abs/1911.07757) published ar CVPR 2020.
+and Temporal Self-Attention"](https://openaccess.thecvf.com/content_CVPR_2020/html/Garnot_Satellite_Image_Time_Series_Classification_With_Pixel-Set_Encoders_and_Temporal_CVPR_2020_paper.html) published ar CVPR 2020.
 
 ![](./graphics/PSETAE.png)
 
 
-[Paper](https://arxiv.org/abs/1911.07757) abstract:
+[Paper](https://openaccess.thecvf.com/content_CVPR_2020/html/Garnot_Satellite_Image_Time_Series_Classification_With_Pixel-Set_Encoders_and_Temporal_CVPR_2020_paper.html) abstract:
 
 *Satellite image time series, bolstered by their growing availability, are at the forefront of an extensive effort towards 
 automated Earth monitoring by international institutions. In particular, large-scale control of agricultural parcels is 
@@ -25,6 +25,7 @@ for future work on satellite image time series.*
 
 ## [UPDATES]
 
+- **17.07.2020** Check our [*lightweight* version of the TAE](https://github.com/VSainteuf/lightweight-temporal-attention-pytorch), a channel grouping strategy brings better performance with 10 times fewer parameters.
 - **30.03.2020** Dataset preparation script available in 'preprocessing' folder + Variation of the PixeSetData class that loads all samples to RAM at init.  
 - **12.03.2020** Bug fix in the TAE script (*see pull request comments*): if you were using a previous version, re-download the pre-trained weights. 
 
