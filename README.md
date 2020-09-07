@@ -1,4 +1,4 @@
-# Satellite Image Time Series Classification with Pixel-Set Encoders and Temporal Self-Attention (CVPR 2020)
+# Satellite Image Time Series Classification with Pixel-Set Encoders and Temporal Self-Attention (CVPR 2020, Oral)
 
 
 PyTorch implementation of the model presented in 
