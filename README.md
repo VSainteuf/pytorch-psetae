@@ -25,6 +25,7 @@ for future work on satellite image time series.*
 
 ## [UPDATES]
 
+- **17.08.2021** Check out our [new approach](https://github.com/VSainteuf/utae-paps) for panoptic segmentation of satellite image time series, as well as our [new benchmark dataset](https://github.com/VSainteuf/pastis-benchmark) for semantic and panotpic segmentation of satellite image time series.
 - **17.07.2020** Check our [*lightweight* version of the TAE](https://github.com/VSainteuf/lightweight-temporal-attention-pytorch), a channel grouping strategy brings better performance with 10 times fewer parameters.
 - **30.03.2020** Dataset preparation script available in 'preprocessing' folder + Variation of the PixeSetData class that loads all samples to RAM at init.  
 - **12.03.2020** Bug fix in the TAE script (*see pull request comments*): if you were using a previous version, re-download the pre-trained weights. 
