@@ -43,12 +43,15 @@ Ubuntu 18.04.1 LTS, python 3.6.6, pytorch 1.1.0, CUDA 10.0
 
 ### Datasets
 
-* A *toy version* of the Pixel-set dataset can be directly downloaded [here](http://recherche.ign.fr/llandrieu/TAE/S2-2017-T31TFM-PixelSet-TOY.zip), 
+A *toy version* of the Pixel-set dataset can be directly downloaded [here](http://recherche.ign.fr/llandrieu/TAE/S2-2017-T31TFM-PixelSet-TOY.zip), 
 to get an idea of the dataset structure.
 
-* The complete Pixel-set and Pixel-patch datasets are accessible upon request.
+The complete Pixel-set and Pixel-patch datasets are accessible on Zenodo at the following links:
 
-**Please send an e-mail to lastig (dot) data (at) gmail (dot) com to request access.**
+- [Pixel-Set dataset](https://zenodo.org/record/5815488) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5815488.svg)](https://doi.org/10.5281/zenodo.5815488)
+
+- [Pixel-Patch dataset](https://zenodo.org/record/5815523) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5815523.svg)](https://doi.org/10.5281/zenodo.5815523)
+
 
 ### Pre-trained weights
 
